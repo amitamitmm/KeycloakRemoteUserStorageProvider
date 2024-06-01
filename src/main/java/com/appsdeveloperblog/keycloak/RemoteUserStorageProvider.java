@@ -12,10 +12,13 @@ import org.keycloak.storage.user.UserLookupProvider;
 public class RemoteUserStorageProvider implements UserLookupProvider, CredentialInputValidator, UserStorageProvider {
 	private KeycloakSession session;
 	private ComponentModel model;
+	private UsersApiLegacyService usersService;
 
-	public RemoteUserStorageProvider(KeycloakSession session, ComponentModel model) {
+	public RemoteUserStorageProvider(KeycloakSession session, ComponentModel model,
+			UsersApiLegacyService usersService) {
 		this.session = session;
 		this.model = model;
+		this.usersService = usersService;
 	}
  
 	@Override
@@ -32,7 +35,14 @@ public class RemoteUserStorageProvider implements UserLookupProvider, Credential
 
 	@Override
 	public UserModel getUserByUsername(RealmModel realm, String username) {
-		// TODO Auto-generated method stub
+		UserModel returnValue = null;
+		
+		User user = usersService.getUserByUserName(username);
+		
+		if(user!=null) {
+			returnValue = new UserAdapter(session, realm, model, user);
+		}
+		
 		return null;
 	}
 
