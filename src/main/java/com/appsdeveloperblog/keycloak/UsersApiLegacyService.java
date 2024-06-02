@@ -4,6 +4,8 @@ import org.jboss.logging.Logger;
 import org.keycloak.broker.provider.util.SimpleHttp;
 import org.keycloak.models.KeycloakSession;
 
+import jakarta.ws.rs.PathParam;
+
 public class UsersApiLegacyService {
 
 	private static final Logger LOGGER = Logger.getLogger(UsersApiLegacyService.class);
@@ -25,6 +27,26 @@ public class UsersApiLegacyService {
 		}
 
 		return user;
+	}
+	
+	public VerifyPasswordResponse verifyUserPassword(@PathParam("username") String username, String password) {
+		SimpleHttp simpleHttp = SimpleHttp.doPost("http://localhost:8099/users/" + username + "/verify-password", session);
+
+		VerifyPasswordResponse verifyPasswordResponse = null;
+
+		// Include password as form data in the request body
+		simpleHttp.param("password", password);
+		
+		// Add headers if needed
+		simpleHttp.header("Content-Type", "application/x-www-form-urlencoded");
+
+		try {
+			verifyPasswordResponse = simpleHttp.asJson(VerifyPasswordResponse.class);
+		} catch (Exception e) {
+			LOGGER.error("The provided password is incorrect", e);
+		}
+
+		return verifyPasswordResponse;
 	}
 
 }
