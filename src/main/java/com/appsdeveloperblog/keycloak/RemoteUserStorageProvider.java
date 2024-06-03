@@ -6,6 +6,7 @@ import org.keycloak.credential.CredentialInputValidator;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserLookupProvider;
 
@@ -29,8 +30,9 @@ public class RemoteUserStorageProvider implements UserLookupProvider, Credential
 
 	@Override
 	public UserModel getUserById(RealmModel realm, String id) {
-		// TODO Auto-generated method stub
-		return null;
+		StorageId storageId = new StorageId(id);
+		String email = storageId.getExternalId();
+		return getUserByUsername(realm, email);
 	}
 
 	@Override
@@ -48,8 +50,7 @@ public class RemoteUserStorageProvider implements UserLookupProvider, Credential
 
 	@Override
 	public UserModel getUserByEmail(RealmModel realm, String email) {
-		// TODO Auto-generated method stub
-		return null;
+		return getUserByUsername(realm, email);
 	}
 
 	@Override
