@@ -6,6 +6,8 @@ package com.appsdeveloperblog.keycloak;
 */
 public class VerifyPasswordResponse {
    private boolean result;
+   
+   public VerifyPasswordResponse() {}
 
    public VerifyPasswordResponse(boolean result) {
 		this.result = result;
