@@ -6,6 +6,7 @@ import org.keycloak.credential.CredentialInputValidator;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
+import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.user.UserLookupProvider;
@@ -45,7 +46,7 @@ public class RemoteUserStorageProvider implements UserLookupProvider, Credential
 			returnValue = new UserAdapter(session, realm, model, user);
 		}
 		
-		return null;
+		return returnValue;
 	}
 
 	@Override
@@ -55,20 +56,25 @@ public class RemoteUserStorageProvider implements UserLookupProvider, Credential
 
 	@Override
 	public boolean supportsCredentialType(String credentialType) {
-		// TODO Auto-generated method stub
-		return false;
+		return PasswordCredentialModel.TYPE.equals(credentialType);
 	}
 
 	@Override
 	public boolean isConfiguredFor(RealmModel realm, UserModel user, String credentialType) {
-		// TODO Auto-generated method stub
-		return false;
+		return credentialType.equals(PasswordCredentialModel.TYPE);
 	}
 
 	@Override
 	public boolean isValid(RealmModel realm, UserModel user, CredentialInput credentialInput) {
-		// TODO Auto-generated method stub
-		return false;
+		VerifyPasswordResponse verifyPasswordResponse = usersService.verifyUserPassword(user.getUsername(), 
+				credentialInput.getChallengeResponse());
+		
+		if(verifyPasswordResponse == null) {
+			return false;
+		}
+		
+		
+		return verifyPasswordResponse.getResult();
 	}
 
 }
